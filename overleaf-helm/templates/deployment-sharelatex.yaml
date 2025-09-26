@@ -28,12 +28,12 @@ spec:
             - containerPort: 80
           volumeMounts:
             - name: sharelatex-data
-              mountPath: {{ .Values.sharelatex.volumeMount }}
+              mountPath: {{ .Values.sharelatex.mountPath }}
       volumes:
         - name: sharelatex-data
-          hostPath:
-            path: {{ .Values.sharelatex.dataPath }}
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: sharelatex-pvc
+
 ---
 apiVersion: v1
 kind: Service
@@ -45,3 +45,15 @@ spec:
       targetPort: 80
   selector:
     app: sharelatex
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sharelatex-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.sharelatex.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }}

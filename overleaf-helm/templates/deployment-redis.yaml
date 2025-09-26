@@ -17,12 +17,12 @@ spec:
           image: {{ .Values.redis.image }}
           volumeMounts:
             - name: redis-data
-              mountPath: {{ .Values.redis.volumeMount }}
+              mountPath: {{ .Values.redis.mountPath }}
       volumes:
         - name: redis-data
-          hostPath:
-            path: {{ .Values.redis.dataPath }}
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: redis-pvc
+
 ---
 apiVersion: v1
 kind: Service
@@ -33,3 +33,15 @@ spec:
     - port: 6379
   selector:
     app: redis
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.redis.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }} # optional: specify your storage class

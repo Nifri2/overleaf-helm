@@ -15,18 +15,17 @@ spec:
       containers:
         - name: mongo
           image: {{ .Values.mongo.image }}
-          command: ["--replSet", "overleaf"]
+          args: ["--replSet", "overleaf"]
           env:
             - name: MONGO_INITDB_DATABASE
               value: {{ .Values.mongo.database }}
           volumeMounts:
             - name: mongo-data
-              mountPath: {{ .Values.mongo.volumeMount }}
+              mountPath: {{ .Values.mongo.mountPath }}
       volumes:
         - name: mongo-data
-          hostPath:
-            path: {{ .Values.mongo.dataPath }}
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: mongo-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -37,3 +36,15 @@ spec:
     - port: 27017
   selector:
     app: mongo
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongo.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }}

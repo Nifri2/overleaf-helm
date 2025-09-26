@@ -6,16 +6,21 @@ sharelatex:
   redisHost: redis
   mongoUrl: mongodb://mongo/sharelatex
   nodePort: 80
-  volumeMount: /var/lib/overleaf
-  dataPath: /home/user/sharelatex_data
+  storageSize: 5Gi
+  mountPath: /var/lib/overleaf
 
 mongo:
   image: mongo:6.0
   database: sharelatex
-  volumeMount: /data/db
-  dataPath: /home/user/mongo_data
+  storageSize: 5Gi
+  mountPath: /data/db
 
 redis:
   image: redis:6.2
-  volumeMount: /data
-  dataPath: /home/user/redis_data
+  storageSize: 2Gi
+  mountPath: /data
+
+persistence:
+  enabled: true
+  storageClass: "longhorn"
+  accessMode: ReadWriteOnce
