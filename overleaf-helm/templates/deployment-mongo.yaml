@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.mongo.image }}
+          command: ["--replSet", "overleaf"]
+          env:
+            - name: MONGO_INITDB_DATABASE
+              value: {{ .Values.mongo.database }}
+          volumeMounts:
+            - name: mongo-data
+              mountPath: {{ .Values.mongo.volumeMount }}
+      volumes:
+        - name: mongo-data
+          hostPath:
+            path: {{ .Values.mongo.dataPath }}
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: mongo

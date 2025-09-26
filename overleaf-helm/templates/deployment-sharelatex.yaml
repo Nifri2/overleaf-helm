@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sharelatex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sharelatex
+  template:
+    metadata:
+      labels:
+        app: sharelatex
+    spec:
+      containers:
+        - name: sharelatex
+          image: {{ .Values.sharelatex.image }}
+          env:
+            - name: OVERLEAF_APP_NAME
+              value: {{ .Values.sharelatex.appName }}
+            - name: OVERLEAF_REDIS_HOST
+              value: {{ .Values.sharelatex.redisHost }}
+            - name: REDIS_HOST
+              value: {{ .Values.sharelatex.redisHost }}
+            - name: OVERLEAF_MONGO_URL
+              value: {{ .Values.sharelatex.mongoUrl }}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: sharelatex-data
+              mountPath: {{ .Values.sharelatex.volumeMount }}
+      volumes:
+        - name: sharelatex-data
+          hostPath:
+            path: {{ .Values.sharelatex.dataPath }}
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sharelatex
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: sharelatex
