@@ -13,6 +13,20 @@ spec:
         app: sharelatex
     spec:
       enableServiceLinks: false
+
+      # <-- Add initContainers here, before containers
+      initContainers:
+        - name: wait-for-mongo
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z mongo 27017; do
+                echo "Waiting for MongoDB..."
+                sleep 2
+              done
+
       containers:
         - name: sharelatex
           image: {{ .Values.sharelatex.image }}
@@ -31,22 +45,7 @@ spec:
               value: {{ .Values.sharelatex.redisHost }}
             - name: OVERLEAF_MONGO_URL
               value: {{ .Values.sharelatex.mongoUrl }}
-
-            # Kubernetes service-like environment variables (manually added)
-            - name: OVERLEAF_SERVICE_HOST
-              value: "sharelatex"
-            - name: OVERLEAF_PORT_80_TCP
-              value: "tcp://sharelatex:80"
-            - name: OVERLEAF_PORT_80_TCP_ADDR
-              value: "sharelatex"
-            - name: OVERLEAF_PORT
-              value: "80"
-            - name: OVERLEAF_SERVICE_PORT
-              value: "80"
-            - name: OVERLEAF_PORT_80_TCP_PROTO
-              value: "tcp"
-            - name: OVERLEAF_PORT_80_TCP_PORT
-              value: "80"
+            # ... other env vars ...
           ports:
             - containerPort: 80
           volumeMounts:
