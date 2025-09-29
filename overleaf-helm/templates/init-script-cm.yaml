@@ -5,4 +5,15 @@ metadata:
   name: mongo-init-script
 data:
   mongodb-init-replica-set.js: |
-    rs.initiate({ _id: 'overleaf', members: [{ _id: 0, host: 'mongo:27017' }] })
+    try {
+      var status = rs.status();
+      if (status.ok === 1) {
+        print("Replica set already initialized, skipping");
+      }
+    } catch (e) {
+      print("Initializing replica set...");
+      rs.initiate({
+        _id: 'overleaf',
+        members: [{ _id: 0, host: 'mongo:27017' }]
+      });
+    }

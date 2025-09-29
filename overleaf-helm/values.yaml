@@ -8,6 +8,46 @@ sharelatex:
   nodePort: 80
   storageSize: 5Gi
   mountPath: /var/lib/overleaf
+  extraEnv:
+    - name: OVERLEAF_SITE_URL
+      value: "https://overleaf.maxresdefault.zip"
+    - name: OVERLEAF_CONTACT_EMAIL
+      value: "something@example.com"
+    - name: OVERLEAF_NAV_TITLE
+      value: "Overleaf CE Helm Chart"
+    - name: OVERLEAF_LEFT_FOOTER
+      value: '[{"text": "Packaged by <a href=\"https://github.com/Nifri2/overleaf-helm\">Nifri</a>"} ]'
+    - name: OVERLEAF_RIGHT_FOOTER
+      value: '[{"text": "Another thingy"} ]'
+
+      # Additional environment variables can be set here
+      # OVERLEAF_SITE_URL: http://overleaf.example.com
+      # OVERLEAF_NAV_TITLE: Overleaf Community Edition
+      # OVERLEAF_HEADER_IMAGE_URL: http://example.com/mylogo.png
+      # OVERLEAF_ADMIN_EMAIL: support@it.com
+
+      # OVERLEAF_LEFT_FOOTER: '[{"text": "Another page I want to link to can be found <a href=\"here\">here</a>"} ]'
+      # OVERLEAF_RIGHT_FOOTER: '[{"text": "Hello I am on the Right"} ]'
+
+      # OVERLEAF_EMAIL_FROM_ADDRESS: "hello@example.com"
+
+      # OVERLEAF_EMAIL_AWS_SES_ACCESS_KEY_ID:
+      # OVERLEAF_EMAIL_AWS_SES_SECRET_KEY:
+
+      # OVERLEAF_EMAIL_SMTP_HOST: smtp.example.com
+      # OVERLEAF_EMAIL_SMTP_PORT: 587
+      # OVERLEAF_EMAIL_SMTP_SECURE: false
+      # OVERLEAF_EMAIL_SMTP_USER:
+      # OVERLEAF_EMAIL_SMTP_PASS:
+      # OVERLEAF_EMAIL_SMTP_TLS_REJECT_UNAUTH: true
+      # OVERLEAF_EMAIL_SMTP_IGNORE_TLS: false
+      # OVERLEAF_EMAIL_SMTP_NAME: '127.0.0.1'
+      # OVERLEAF_EMAIL_SMTP_LOGGER: true
+      # OVERLEAF_CUSTOM_EMAIL_FOOTER: "This system is run by department x"
+
+      # List of all config options:
+      # https://github.com/overleaf/overleaf/blob/main/docker-compose.yml
+
 
 mongo:
   image: mongo:6.0

@@ -50,7 +50,10 @@ spec:
               value: {{ .Values.sharelatex.redisHost }}
             - name: OVERLEAF_MONGO_URL
               value: {{ .Values.sharelatex.mongoUrl }}
-            # ... other env vars ...
+          {{- with .Values.sharelatex.extraEnv }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
           ports:
             - containerPort: 80
           volumeMounts:
