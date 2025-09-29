@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # create-overleaf-admin.sh
-# Creates an admin user in a running Overleaf (ShareLaTeX) pod
+# Creates a user in a running Overleaf (ShareLaTeX) pod
 
 set -euo pipefail
 
@@ -9,16 +9,18 @@ usage() {
 Usage: $0 [OPTIONS]
 
 Options:
-  -e, --email EMAIL     Email address of the admin user to create (required)
+  -e, --email EMAIL     Email address of the user to create (required)
   -h, --help            Show this help message and exit
+  --admin               Create the user as an admin
 
 Example:
-  ./create-overleaf-admin.sh --email admin@example.com
+  ./create-overleaf-admin.sh --email user@example.com --admin
 EOF
 }
 
 # Default values
 ADMIN_EMAIL=""
+IS_ADMIN=false
 
 # Parse CLI arguments
 while [[ $# -gt 0 ]]; do
@@ -26,6 +28,10 @@ while [[ $# -gt 0 ]]; do
     -e|--email)
       ADMIN_EMAIL="$2"
       shift 2
+      ;;
+    --admin)
+      IS_ADMIN=true
+      shift
       ;;
     -h|--help)
       usage
@@ -67,10 +73,13 @@ if [[ -z "$POD" ]]; then
 fi
 
 echo "Running create-user.js in pod $POD..."
-echo "Creating admin user with email: $ADMIN_EMAIL"
+echo "Creating user with email: $ADMIN_EMAIL"
+
+CMD="node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js --email '$ADMIN_EMAIL'"
+if [[ "$IS_ADMIN" == true ]]; then
+  CMD="$CMD --admin"
+fi
 
 kubectl exec "$POD" --container sharelatex -- \
-  sh -c "cd /overleaf/services/web && \
-         node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js --email '$ADMIN_EMAIL' --admin" \
+  sh -c "cd /overleaf/services/web && $CMD" \
   | grep -A100 -i "Successfully created"
-

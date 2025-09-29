@@ -7,6 +7,7 @@
     Options:
         -e, --email EMAIL     Email address of the admin user to create (required)
         -h, --help            Show this help message and exit
+        --admin               Create the user as an admin
 
     Example:
         ./create-overleaf-admin.sh --email admin@example.com
