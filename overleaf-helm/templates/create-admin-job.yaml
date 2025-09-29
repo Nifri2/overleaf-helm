@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "overleaf-helm.fullname" . }}-create-admin
+  name: {{ include "overleaf-helm.fullname" . }}-create-admin-{{ randAlphaNum 5 | lower }}
   labels:
     {{- include "overleaf-helm.labels" . | nindent 4 }}
   annotations:
@@ -40,25 +40,25 @@ spec:
               fi
 
               echo "Running create-user.js in pod $POD..."
-              kubectl exec "$POD" -- node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
-                --email "${OVERLEAF_ADMIN_USERNAME}" \
-                --password "${OVERLEAF_ADMIN_PASSWORD}" || true
+              kubectl exec "$POD" -- env \
+                OVERLEAF_MONGO_URL="$OVERLEAF_MONGO_URL" \
+                OVERLEAF_REDIS_HOST="$OVERLEAF_REDIS_HOST" \
+                cd /overleaf/services/web && node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
+                --email "$OVERLEAF_ADMIN_USERNAME" \
+                --admin
           env:
+            - name: OVERLEAF_MONGO_URL
+              value: {{ .Values.sharelatex.mongoUrl | quote }}
+            - name: OVERLEAF_REDIS_HOST
+              value: {{ .Values.sharelatex.redisHost | quote }}
             {{- if .Values.admin.useSecret }}
             - name: OVERLEAF_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.admin.secret.name }}
-                  key: {{ .Values.admin.secret.usernameKey }}
-            - name: OVERLEAF_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.admin.secret.name }}
-                  key: {{ .Values.admin.secret.passwordKey }}
+                  key: {{ .Values.admin.secret.emailKey }}
             {{- else }}
             - name: OVERLEAF_ADMIN_USERNAME
-              value: {{ .Values.admin.username | quote }}
-            - name: OVERLEAF_ADMIN_PASSWORD
-              value: {{ .Values.admin.password | quote }}
+              value: {{ .Values.admin.email | quote }}
             {{- end }}
 {{- end }}
