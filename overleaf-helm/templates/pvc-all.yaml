@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongo.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.redis.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sharelatex-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.sharelatex.storageSize }}
+  storageClassName: {{ .Values.persistence.storageClass }}

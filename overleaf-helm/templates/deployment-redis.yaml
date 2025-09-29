@@ -22,26 +22,3 @@ spec:
         - name: redis-data
           persistentVolumeClaim:
             claimName: redis-pvc
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis
-spec:
-  ports:
-    - port: 6379
-  selector:
-    app: redis
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: redis-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.redis.storageSize }}
-  storageClassName: {{ .Values.persistence.storageClass }} # optional: specify your storage class
