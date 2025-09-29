@@ -1,0 +1,4 @@
+
+
+Use Logs to get the URLs to login after installation
+kubectl logs -f job -l job-type=create-admin

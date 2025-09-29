@@ -48,8 +48,14 @@ sharelatex:
       # List of all config options:
       # https://github.com/overleaf/overleaf/blob/main/docker-compose.yml
 
+
+# Use Logs to get the URLs to login after installation
+# kubectl logs -f job -l job-type=create-admin
+
+
+# This feature doenst work yet
 admin:
-  create: true
+  create: false
   email: admin@admin.com
   useSecret: false # if true, overrides username and password above
   secret:
