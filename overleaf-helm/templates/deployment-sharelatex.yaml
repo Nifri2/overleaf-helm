@@ -36,8 +36,8 @@ spec:
         - name: sharelatex
           image: {{ .Values.sharelatex.image }}
           securityContext:
-            runAsUser: 0 # THINK: is this necessary?
-            runAsGroup: 0
+            runAsUser: 1000
+            runAsGroup: 1000
             capabilities:
               add:
                 - SYS_RESOURCE
