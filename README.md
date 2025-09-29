@@ -22,6 +22,8 @@ Get the Admin Credentials
 kubectl logs -f job -l job-type=create-admin
 ```
 
+As long the job doesnt work please use this script to generate a user
+
 # Configuration
 The following table lists the configurable parameters of this chart and their default values.
 | Parameter      | Description                               | Default |
