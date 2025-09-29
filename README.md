@@ -15,6 +15,9 @@ cd overleaf-helm
 helm upgrade --install overleaf ./overleaf-helm --namespace overleaf --create-namespace
 ```
 
+### Post Install
+
+Please run `post-install.sh`
 
 ### Creating the First Admin User
 
