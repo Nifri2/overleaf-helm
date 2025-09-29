@@ -1,4 +1,12 @@
 
+--> (This Feature doesn't work yet, please use next tab)
+    Use Logs to get the URLs to login after installation
+    kubectl logs -f job -l job-type=create-admin
 
-Use Logs to get the URLs to login after installation
-kubectl logs -f job -l job-type=create-admin
+--> Use the create-user.sh script
+    Options:
+        -e, --email EMAIL     Email address of the admin user to create (required)
+        -h, --help            Show this help message and exit
+
+    Example:
+        ./create-overleaf-admin.sh --email admin@example.com

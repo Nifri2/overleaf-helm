@@ -13,16 +13,16 @@ Clone the repository and install using Helm:
 git clone https://github.com/Nifri2/overleaf-helm.git
 cd overleaf-helm
 helm upgrade --install overleaf ./overleaf-helm --namespace overleaf --create-namespace
-```
 
-(Doesnt worky yet / WIP)
 
-Get the Admin Credentials
+### Creating the First Admin User
+
+As long as the Helm Job for creating the admin user doesn't work, you can use the following script to generate a user manually:
+
 ```bash
-kubectl logs -f job -l job-type=create-admin
+./create-overleaf-admin.sh --email admin@example.com
 ```
 
-As long the job doesnt work please use this script to generate a user
 
 # Configuration
 The following table lists the configurable parameters of this chart and their default values.
