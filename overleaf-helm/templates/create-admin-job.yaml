@@ -5,6 +5,8 @@ metadata:
   name: {{ include "overleaf-helm.fullname" . }}-create-admin
   labels:
     {{- include "overleaf-helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   template:
     spec:
@@ -12,13 +14,31 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: create-admin
-          image: {{ .Values.sharelatex.image }}
+          image: {{ .Values.admin.job.image }}
           command:
             - sh
             - -c
             - |
-              echo "Finding running sharelatex pod..."
-              POD=$(kubectl get pods -l app=sharelatex -o jsonpath='{.items[0].metadata.name}')
+              echo "Waiting for sharelatex pod to be Ready..."
+              POD=""
+              for i in $(seq 1 30); do
+                POD=$(kubectl get pods -l app=sharelatex -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+                if [ -n "$POD" ]; then
+                  STATUS=$(kubectl get pod "$POD" -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+                  if [ "$STATUS" = "True" ]; then
+                    echo "Pod $POD is Ready"
+                    break
+                  fi
+                fi
+                echo "Pod not ready yet, retrying..."
+                sleep 2
+              done
+
+              if [ -z "$POD" ]; then
+                echo "Error: could not find a ready sharelatex pod"
+                exit 1
+              fi
+
               echo "Running create-user.js in pod $POD..."
               kubectl exec "$POD" -- node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
                 --email "${OVERLEAF_ADMIN_USERNAME}" \
