@@ -7,6 +7,7 @@ metadata:
     {{- include "overleaf-helm.labels" . | nindent 4 }}
   annotations:
     "helm.sh/resource-policy": keep
+    "helm.sh/hook": post-install
 spec:
   template:
     spec:
@@ -40,25 +41,26 @@ spec:
               fi
 
               echo "Running create-user.js in pod $POD..."
-              kubectl exec "$POD" -- env \
-                OVERLEAF_MONGO_URL="$OVERLEAF_MONGO_URL" \
-                OVERLEAF_REDIS_HOST="$OVERLEAF_REDIS_HOST" \
-                cd /overleaf/services/web && node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
-                --email "$OVERLEAF_ADMIN_USERNAME" \
-                --admin
+
+              kubectl exec "$POD" --container sharelatex -- \
+                sh -c 'cd /overleaf/services/web && \
+                  OVERLEAF_MONGO_URL="$OVERLEAF_MONGO_URL" \
+                  OVERLEAF_REDIS_HOST="$OVERLEAF_REDIS_HOST" \
+                  node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
+                  --email "$OVERLEAF_ADMIN_EMAIL" --admin' | grep -A100 -i "Successfully created"
           env:
             - name: OVERLEAF_MONGO_URL
               value: {{ .Values.sharelatex.mongoUrl | quote }}
             - name: OVERLEAF_REDIS_HOST
               value: {{ .Values.sharelatex.redisHost | quote }}
             {{- if .Values.admin.useSecret }}
-            - name: OVERLEAF_ADMIN_USERNAME
+            - name: OVERLEAF_ADMIN_EMAIL
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.admin.secret.name }}
                   key: {{ .Values.admin.secret.emailKey }}
             {{- else }}
-            - name: OVERLEAF_ADMIN_USERNAME
+            - name: OVERLEAF_ADMIN_EMAIL
               value: {{ .Values.admin.email | quote }}
             {{- end }}
 {{- end }}
