@@ -16,8 +16,13 @@ kubectl exec -it "$POD_NAME" --container sharelatex -- \
 echo "Installing essential LaTeX packages..."
 kubectl exec -it "$POD_NAME" --container sharelatex -- \
   tlmgr install \
-    tikz pgf xcolor geometry lipsum amsmath amssymb fancyhdr hyperref \
+    pgf caption xcolor geometry lipsum amsmath amsfonts fancyhdr hyperref \
     fontspec microtype enumitem titlesec sectsty mathtools booktabs \
-    siunitx caption subcaption float todonotes
+    siunitx float todonotes setspace parskip \
+    babel-german \
+    babel-english \
+    babel-french \
+    babel-spanish \
+    babel-italian
 
 echo "All selected LaTeX packages installed successfully!"
