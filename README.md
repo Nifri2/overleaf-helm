@@ -13,6 +13,7 @@ Clone the repository and install using Helm:
 git clone https://github.com/Nifri2/overleaf-helm.git
 cd overleaf-helm
 helm upgrade --install overleaf ./overleaf-helm --namespace overleaf --create-namespace
+```
 
 
 ### Creating the First Admin User
