@@ -1,0 +1,44 @@
+{{- if .Values.admin.create }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "overleaf-helm.fullname" . }}-create-admin
+  labels:
+    {{- include "overleaf-helm.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ include "overleaf-helm.fullname" . }}-admin
+      restartPolicy: OnFailure
+      containers:
+        - name: create-admin
+          image: {{ .Values.sharelatex.image }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Finding running sharelatex pod..."
+              POD=$(kubectl get pods -l app=sharelatex -o jsonpath='{.items[0].metadata.name}')
+              echo "Running create-user.js in pod $POD..."
+              kubectl exec "$POD" -- node /overleaf/services/web/modules/server-ce-scripts/scripts/create-user.js \
+                --email "${OVERLEAF_ADMIN_USERNAME}" \
+                --password "${OVERLEAF_ADMIN_PASSWORD}" || true
+          env:
+            {{- if .Values.admin.useSecret }}
+            - name: OVERLEAF_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.secret.name }}
+                  key: {{ .Values.admin.secret.usernameKey }}
+            - name: OVERLEAF_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.secret.name }}
+                  key: {{ .Values.admin.secret.passwordKey }}
+            {{- else }}
+            - name: OVERLEAF_ADMIN_USERNAME
+              value: {{ .Values.admin.username | quote }}
+            - name: OVERLEAF_ADMIN_PASSWORD
+              value: {{ .Values.admin.password | quote }}
+            {{- end }}
+{{- end }}

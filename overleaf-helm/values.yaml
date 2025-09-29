@@ -48,6 +48,15 @@ sharelatex:
       # List of all config options:
       # https://github.com/overleaf/overleaf/blob/main/docker-compose.yml
 
+admin:
+  create: true
+  username: admin
+  password: admin
+  useSecret: false # if true, overrides username and password above
+  secret:
+    name: overleaf-admin-credentials
+    usernameKey: username
+    passwordKey: password
 
 mongo:
   image: mongo:6.0
