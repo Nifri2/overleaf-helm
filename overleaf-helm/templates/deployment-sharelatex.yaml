@@ -12,9 +12,16 @@ spec:
       labels:
         app: sharelatex
     spec:
+      enableServiceLinks: false
       containers:
         - name: sharelatex
           image: {{ .Values.sharelatex.image }}
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            capabilities:
+              add:
+                - SYS_RESOURCE
           env:
             - name: OVERLEAF_APP_NAME
               value: {{ .Values.sharelatex.appName }}
@@ -24,6 +31,22 @@ spec:
               value: {{ .Values.sharelatex.redisHost }}
             - name: OVERLEAF_MONGO_URL
               value: {{ .Values.sharelatex.mongoUrl }}
+
+            # Kubernetes service-like environment variables (manually added)
+            - name: OVERLEAF_SERVICE_HOST
+              value: "sharelatex"
+            - name: OVERLEAF_PORT_80_TCP
+              value: "tcp://sharelatex:80"
+            - name: OVERLEAF_PORT_80_TCP_ADDR
+              value: "sharelatex"
+            - name: OVERLEAF_PORT
+              value: "80"
+            - name: OVERLEAF_SERVICE_PORT
+              value: "80"
+            - name: OVERLEAF_PORT_80_TCP_PROTO
+              value: "tcp"
+            - name: OVERLEAF_PORT_80_TCP_PORT
+              value: "80"
           ports:
             - containerPort: 80
           volumeMounts:

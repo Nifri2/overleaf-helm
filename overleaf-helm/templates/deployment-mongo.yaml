@@ -12,6 +12,10 @@ spec:
       labels:
         app: mongo
     spec:
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "mongo"
       containers:
         - name: mongo
           image: {{ .Values.mongo.image }}
