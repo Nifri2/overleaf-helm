@@ -24,3 +24,18 @@ persistence:
   enabled: true
   storageClass: "longhorn"
   accessMode: ReadWriteOnce
+
+ingress:
+  enabled: true
+  className: contour
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: overleaf.maxresdefault.zip
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - overleaf.maxresdefault.zip
+      secretName: sharelatex-tls
