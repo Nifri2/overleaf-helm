@@ -21,7 +21,7 @@ helm upgrade --install overleaf ./overleaf-helm --namespace overleaf --create-na
 As long as the Helm Job for creating the admin user doesn't work, you can use the following script to generate a user manually:
 
 ```bash
-./create-overleaf-admin.sh --email admin@example.com
+./create-overleaf-admin.sh --email admin@example.com --admin
 ```
 
 
