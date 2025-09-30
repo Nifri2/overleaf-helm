@@ -15,14 +15,14 @@ kubectl exec -it "$POD_NAME" --container sharelatex -- \
 
 echo "Installing essential LaTeX packages..."
 kubectl exec -it "$POD_NAME" --container sharelatex -- \
-  tlmgr install \
-    pgf caption xcolor geometry lipsum amsmath amsfonts fancyhdr hyperref \
-    fontspec microtype enumitem titlesec sectsty mathtools booktabs \
-    siunitx float todonotes setspace parskip \
-    babel-german \
-    babel-english \
-    babel-french \
-    babel-spanish \
-    babel-italian
+  tlmgr install amsmath amsfonts graphics csquotes unicode-math breqn physics \
+    algorithm2e algorithms algpseudocodex \
+    geometry fancyhdr setspace parskip titlesec sectsty microtype \
+    booktabs makecell \
+    pgf float placeins xcolor \
+    lipsum caption csquotes hyperref pdfpages todonotes \
+    siunitx enumitem fontspec \
+    babel-english babel-german babel-french babel-spanish babel-italian \
+    footmisc algorithmicx pdflscape
 
 echo "All selected LaTeX packages installed successfully!"
